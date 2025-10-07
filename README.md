@@ -15,6 +15,12 @@ The app extracts audio, transcribes speech, and produces a text summary using Op
 
 ---
 
+### Demo
+
+https://github.com/user-attachments/assets/11ca34d0-6cfd-434a-82f9-83c130248584
+
+---
+
 ### Requirements
 1. Python
 2. openai api key
