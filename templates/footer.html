@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="footer section-container">
+        <h2>© <span id="year"></span> Wooyeoup Rho</h2>
+
+        <div class="section-container">
+            <a href="https://github.com/wooyeoup-rho">
+                <img src="{{ url_for('static', filename='assets/github.svg') }}" width="30px"/>
+            </a>
+
+            <a href="https://www.linkedin.com/in/wooyeoup">
+                <img src="{{ url_for('static', filename='assets/linkedin.svg') }}" width="30px"/>
+            </a>
+
+            <a href="mailto:wooyeoup.rho@gmail.com">
+                <img src="{{ url_for('static', filename='assets/envelope.svg') }}" width="30px"/>
+            </a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% include "header.html" %}
+
+<div class="container">
+    <h1>Summarize Video Content</h1>
+    <p>Instantly summarize the audio contents of a video in to a concise, formatted text summary.</p>
+
+    <div class="dashed-container" id="dropZone">
+        <div class="upload-state">
+            <img src="{{ url_for('static', filename='assets/film.svg') }}" width="50px"/>
+            <button type="button" id="fileButton">Choose Video File</button>
+            <p>or, drop the file here</p>
+            <input type="file" id="fileInput" accept="video/*" hidden>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState" style="display: none">
+            <div class="loader">
+                <div></div>
+            </div>
+            <p id="loadingText" style="margin: 8px 0 0 0">Converting to mp3</p>
+        </div>
+
+        <!-- Results State -->
+        <div class="results-state" id="resultsState" style="display: none">
+            <img src="{{ url_for('static', filename='assets/check-circle.svg') }}" width="70px"/>
+            <p id="uploadText">Upload Complete</p>
+            <p id="uploadFileName"></p>
+            <button type="button" id="summarizeButton">Summarize</button>
+        </div>
+
+        <!-- Download State -->
+        <div class="download-state" id="downloadState" style="display: none">
+            <img src="{{ url_for('static', filename='assets/filetype-pdf.svg') }}" width="50px"/>
+            <button type="button" id="downloadButton">Download</button>
+            <p>Download to PDF</p>
+        </div>
+    </div>
+
+    <div class="output-container">
+        <details id="transcriptionDetails">
+            <summary>
+                Transcription <span class="arrow">▼</span>
+            </summary>
+            <div class="paragraph-container">
+                <p id="transcriptionText"></p>
+                <button class="copy-btn" id="copyTranscription">Copy</button>
+            </div>
+        </details>
+
+        <details id="summaryDetails">
+            <summary>
+                Summary <span class="arrow">▼</span>
+            </summary>
+            <div class="summary-container">
+                <div class="paragraph-container">
+                    <p id="summaryText"></p>
+                    <button class="copy-btn" id="copySummary">Copy</button>
+                </div>
+                <div id="markdownText"></div>
+            </div>
+
+        </details>
+    </div>
+</div>
+
+{% include "footer.html" %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+{% endblock %}

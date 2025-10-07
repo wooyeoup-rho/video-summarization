@@ -1,0 +1,33 @@
+# Python bytecode
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+ENV/
+*.egg-info/
+
+# Build directories (PyInstaller, etc.)
+build/
+dist/
+*.spec
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.swp
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Data file
+unknown_words.csv
+
+# Environment variables
+.env
+
+# Misc files
+data/
