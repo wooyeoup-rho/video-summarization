@@ -52,7 +52,7 @@ def transcribe():
 
     transcript = transcribe_audio(audio_path)
 
-    return jsonify({"transcript": transcript.text})
+    return jsonify({"transcript": transcript})
 
 @app.route("/summarize", methods=["POST"])
 def summarize():

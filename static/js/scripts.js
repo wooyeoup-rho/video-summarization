@@ -39,9 +39,6 @@ function handleFile(file) {
     if (file && file.type.startsWith("video/")) {
         const url = URL.createObjectURL(file);
 
-        videoPreview.src = url;
-        videoPreview.style.display = "block";
-
         showState("loadingState");
 
         const fileName = trimFileName(file.name)
@@ -184,25 +181,48 @@ const downloadPDFButton = document.getElementById("downloadButton");
 downloadPDFButton.addEventListener("click", (e) => downloadPDF());
 
 function downloadPDF() {
-const { jsPDF } = window.jspdf;
+    const { jsPDF } = window.jspdf;
     const pdf = new jsPDF();
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 10;
+    const lineHeight = 7;
 
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
-    pdf.text("Transcription", 10, 20);
+    // Helper function to normalize text to avoid spacing issues
+    function normalizeText(text) {
+        return text
+        .replace(/\u00A0/g, " ")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\r\n/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    }
 
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(12);
-    pdf.text(transcription, 10, 30, { maxWidth: 180 });
+    // Helper function to add long text blocks with automatic page breaks
+    function addTextBlock(title, text, startY = 20) {
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.text(title, margin, startY);
 
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(12);
+
+        const cleanText = normalizeText(text);
+        const lines = pdf.splitTextToSize(cleanText, 180);
+
+        let y = startY + 10;
+        lines.forEach((line) => {
+            if (y > pageHeight - margin) {
+                pdf.addPage();
+                y = margin;
+            }
+            pdf.text(line, margin, y);
+            y += lineHeight;
+        });
+    }
+
+    addTextBlock("Transcription", transcription);
     pdf.addPage();
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
-    pdf.text("Summary", 10, 20);
-
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(12);
-    pdf.text(summary, 10, 30, { maxWidth: 180 });
+    addTextBlock("Summary", summary);
 
     pdf.save("export.pdf");
 }

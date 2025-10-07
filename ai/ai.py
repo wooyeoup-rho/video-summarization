@@ -1,5 +1,6 @@
 from openai import OpenAI
 import os
+from pydub import AudioSegment
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,18 +11,61 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-TRANSCRIPT_FOLDER = os.path.join(DATA_DIR, "transcripts")
+output_dir = ""
 
 def transcribe_audio(audio_path):
-    audio_file = open(audio_path, "rb")
-    transcript = client.audio.transcriptions.create(
-      model="whisper-1",
-      file=audio_file
-    )
+    file_size_bytes = 0
+
+    try:
+        file_size_bytes = os.path.getsize(audio_path)
+    except OSError as e:
+        print(f"Error: Could not get file size for '{audio_path}'. {e}")
+
+    # If file size > 20MB, need to chunk it for openai
+    if file_size_bytes > 20*1000000:
+        transcriptions = []
+        chunks = _split_audio(audio_path)
+        for i in range(len(chunks)):
+            chunk_path = os.path.join(output_dir, f"chunk_{i}.mp3")
+            with open(chunk_path, "rb") as f:
+                result = client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=f
+                )
+                transcriptions.append(result.text)
+
+        transcript = " ".join(transcriptions)
+    else:
+        audio_file = open(audio_path, "rb")
+        result = client.audio.transcriptions.create(
+          model="whisper-1",
+          file=audio_file
+        )
+
+        transcript = result.text
 
     return transcript
+
+def _split_audio(audio_path):
+    global output_dir
+    audio = AudioSegment.from_file(audio_path)
+
+    # Defines chunk size in milliseconds
+    chunk_duration_ms = 2 * 60 * 1000
+
+    chunks = []
+
+    video_name = os.path.splitext(os.path.basename(audio_path))[0]
+    output_dir = f"data/audio/{video_name}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    for i in range(0, len(audio), chunk_duration_ms):
+        chunk = audio[i:i + chunk_duration_ms]
+        chunks.append(chunk)
+        chunk.export(os.path.join(output_dir, f"chunk_{i//chunk_duration_ms}.mp3"),
+                 format="mp3", bitrate="128k")
+
+    return chunks
 
 def summarize_transcript(transcription):
     prompt = f"""You are a note-taking assistant that formats information into clean, structured, and Markdown-compatible notes for Notion.
