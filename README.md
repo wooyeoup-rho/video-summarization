@@ -80,7 +80,7 @@ setx OPENAI_API_KEY "your_api_key_here"
 Run the Flask development server:
 
 ```commandline
-python app.py
+python run.py
 ```
 
 Then open your browser and visit http://localhost:5000

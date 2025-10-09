@@ -1,8 +1,9 @@
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 import os
 from pydub import AudioSegment
 from dotenv import load_dotenv
 
+output_dir = ""
 load_dotenv()
 api_key=os.getenv("OPENAI_API_KEY")
 
@@ -11,9 +12,10 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-output_dir = ""
+class AIServiceError(Exception):
+    pass
 
-def transcribe_audio(audio_path):
+def transcribe_audio(audio_path, ai_client=client):
     file_size_bytes = 0
 
     try:
@@ -25,24 +27,29 @@ def transcribe_audio(audio_path):
     if file_size_bytes > 20*1000000:
         transcriptions = []
         chunks = _split_audio(audio_path)
-        for i in range(len(chunks)):
-            chunk_path = os.path.join(output_dir, f"chunk_{i}.mp3")
-            with open(chunk_path, "rb") as f:
-                result = client.audio.transcriptions.create(
-                    model="whisper-1",
-                    file=f
-                )
-                transcriptions.append(result.text)
-
-        transcript = " ".join(transcriptions)
+        try:
+            for i in range(len(chunks)):
+                chunk_path = os.path.join(output_dir, f"chunk_{i}.mp3")
+                with open(chunk_path, "rb") as f:
+                    result = ai_client.audio.transcriptions.create(
+                        model="whisper-1",
+                        file=f
+                    )
+                    transcriptions.append(result.text)
+            transcript = " ".join(transcriptions)
+        except (OSError, OpenAIError) as e:
+            raise AIServiceError(f"Transcription failed: {e}") from e
     else:
-        audio_file = open(audio_path, "rb")
-        result = client.audio.transcriptions.create(
-          model="whisper-1",
-          file=audio_file
-        )
+        try:
+            with open(audio_path, "rb") as audio_file:
+                result = ai_client.audio.transcriptions.create(
+                  model="whisper-1",
+                  file=audio_file
+                )
 
-        transcript = result.text
+            transcript = result.text
+        except (OSError, OpenAIError) as e:
+            raise AIServiceError(f"Transcription failed: {e}") from e
 
     return transcript
 
@@ -67,7 +74,7 @@ def _split_audio(audio_path):
 
     return chunks
 
-def summarize_transcript(transcription):
+def summarize_transcript(transcription, ai_client=client):
     prompt = f"""You are a note-taking assistant that formats information into clean, structured, and Markdown-compatible notes for Notion.
     Your goal:
     - Analyze the following transcript.
@@ -92,16 +99,18 @@ def summarize_transcript(transcription):
     Transcript:
     {transcription}
     """
+    try:
+        response = ai_client.responses.create(
+            model="gpt-5-mini",
+            reasoning={"effort": "low"},
+            input=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
 
-    response = client.responses.create(
-        model="gpt-5-mini",
-        reasoning={"effort": "low"},
-        input=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
-
-    return response.output_text
+        return response.output_text
+    except OpenAIError as e:
+        raise AIServiceError(f"Summarization failed: {e}") from e
