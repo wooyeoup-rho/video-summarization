@@ -1,4 +1,4 @@
-# <img src="static/assets/video_summarizer_icon.svg" alt="Video Summarization Logo" width="50px"/> Video Summarization
+# <img src="app/static/assets/video_summarizer_icon.svg" alt="Video Summarization Logo" width="50px"/> Video Summarization
 A lightweight **Flask web app** that lets users upload a video and get an AI-generated summary of its content.
 The app extracts audio, transcribes speech, and produces a text summary using OpenAI’s API in **Markdown** - suitable for notetaking apps like **Notion**.
 
