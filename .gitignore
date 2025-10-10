@@ -29,5 +29,8 @@ unknown_words.csv
 # Environment variables
 .env
 
+# Node modules
+node_modules
+
 # Misc files
 data/

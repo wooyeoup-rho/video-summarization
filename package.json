@@ -1,0 +1,19 @@
+{
+  "name": "video-summarization",
+  "version": "1.0.0",
+  "description": "A lightweight **Flask web app** that lets users upload a video and get an AI-generated summary of its content.\r The app extracts audio, transcribes speech, and produces a text summary using OpenAI’s API in **Markdown** - suitable for notetaking apps like **Notion**.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "keywords": [],
+  "author": "Wooyeoup Rho",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^15.4.0"
+  }
+}
