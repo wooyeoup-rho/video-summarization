@@ -3,7 +3,27 @@
 
 {% block content %}
     <div class="header section-container">
-        <img src="{{ url_for('static', filename='assets/video_summarizer_icon.svg') }}" width="50px"/>
-        <h2 class="title">Video Summarizer</h2>
+        <div class="section-container">
+            <img src="{{ url_for('static', filename='assets/video_summarizer_icon.svg') }}" width="50px"/>
+            <h2 class="title">Video Summarizer</h2>
+        </div>
+
+
+        <div>
+            <label for="openai_key" class="title">
+                <span class="help-icon-wrapper">
+                    <button type="button" class="help-icon" aria-describedby="openai-key-help">?</button>
+
+                    <span class="help-tooltip" role="tooltip" id="openai-key-help">
+                      We use this key only for your request and do not store it.
+                      Leave empty to use the app's default key (if configured).
+                    </span>
+                </span>
+
+                OpenAI API key:
+            </label>
+
+            <input id="openai_key" name="openai_key" type="password" placeholder="sk-..." autocomplete="off"/>
+        </div>
     </div>
 {% endblock %}

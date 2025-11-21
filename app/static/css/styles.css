@@ -29,6 +29,7 @@ h2 {
 
 .header {
     background-color: #222831;
+    justify-content: space-between;
 }
 
 .footer {
@@ -107,9 +108,7 @@ video {
     border: 1px solid #fff
 }
 
-/* PREVIEW */
-
-/* LOADING */
+/* LOADING STATE */
 .loader {
     display: flex;
     justify-content: center;
@@ -130,7 +129,7 @@ video {
     100% { transform: rotate(360deg); }
 }
 
-/* RESULTS */
+/* RESULTS STATE */
 #uploadText {
     font-weight: 500;
     font-size: 1.2rem;
@@ -141,7 +140,7 @@ video {
     font-size: 0.8rem;
 }
 
-/* */
+/* SUMMARY */
 
 .output-container {
     display: flex;
@@ -260,4 +259,72 @@ details p, #markdownText {
     padding: 5px 10px;
     font-size: 12px;
     cursor: pointer;
+}
+
+/* API KEY */
+input {
+    width: 300px;
+    background: #393E46;
+    border: 0;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.help-icon-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.help-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    background: #00ADB5;
+    font-size: 0.9rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+.help-icon:hover {
+    background: #00959c;
+}
+
+.help-tooltip {
+    position: absolute;
+    left: 50%;
+    top: 150%;
+    transform: translateX(-50%) translateY(4px);
+    min-width: 220px;
+    max-width: 260px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background: #111;
+    color: #fff;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+    opacity 0.15s ease-out,
+    transform 0.15s ease-out,
+    visibility 0.15s ease-out;
+}
+
+.help-icon-wrapper:hover .help-tooltip,
+.help-icon-wrapper:focus-within .help-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
