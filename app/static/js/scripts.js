@@ -122,6 +122,8 @@ function displaySummary(markdownText) {
 summarizeButton.addEventListener("click", () => handleSummarization());
 
 function handleSummarization() {
+    const apiKey = document.getElementById("openai_key").value.trim() || null;
+
     showState("loadingState")
     changeLoadingText("Transcribing audio")
 
@@ -130,7 +132,10 @@ function handleSummarization() {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ audio_path: audio_path })
+        body: JSON.stringify({
+            audio_path: audio_path,
+            api_key: apiKey
+        })
     })
     .then(response => response.json())
     .then(data => {
@@ -144,7 +149,10 @@ function handleSummarization() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ text: data.transcript })
+            body: JSON.stringify({
+                text: data.transcript,
+                api_key: apiKey,
+            })
         });
     })
     .then(response => response.json())

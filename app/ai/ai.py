@@ -3,18 +3,24 @@ import os
 from pydub import AudioSegment
 from dotenv import load_dotenv
 
-load_dotenv()
-api_key=os.getenv("OPENAI_API_KEY")
+def get_openai_client(api_key = None) -> OpenAI:
+    load_dotenv()
+    env_key = os.getenv("OPENAI_API_KEY")
 
-if not api_key:
-    raise RuntimeError("Missing OPENAI_API_KEY. Please set it in your environment or .env file.")
+    if not env_key and not api_key:
+        raise RuntimeError("Missing OPENAI_API_KEY. Please set it in your environment or .env file.")
 
-client = OpenAI(api_key=api_key)
+    if api_key:
+        return OpenAI(api_key=api_key)
+
+    return OpenAI(api_key=env_key)
 
 class AIServiceError(Exception):
     pass
 
-def transcribe_audio(audio_path, ai_client=client, chunk_duration_ms=(2 * 60 * 1000), output_dir=None, max_file_size=(20*1000000)):
+def transcribe_audio(audio_path, chunk_duration_ms=(2 * 60 * 1000), output_dir=None, max_file_size=(20*1000000), api_key = None):
+    ai_client = get_openai_client(api_key)
+
     try:
         file_size_bytes = os.path.getsize(audio_path)
     except OSError as e:
@@ -72,7 +78,9 @@ def _split_audio(audio_path, chunk_duration_ms, output_dir=None):
 
     return chunks, output_dir
 
-def summarize_transcript(transcription, ai_client=client):
+def summarize_transcript(transcription, api_key = None):
+    ai_client = get_openai_client(api_key)
+
     prompt = f"""You are a note-taking assistant that formats information into clean, structured, and Markdown-compatible notes for Notion.
     Your goal:
     - Analyze the following transcript.

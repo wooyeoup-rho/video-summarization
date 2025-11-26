@@ -39,11 +39,12 @@ def upload():
 def transcribe():
     data = request.get_json()
     audio_path = data.get("audio_path")
+    api_key = data.get("api_key") or None
 
     if not audio_path or not os.path.exists(audio_path):
         return jsonify({"error": "Invalid or missing audio path"}), 400
 
-    transcript = transcribe_audio(audio_path)
+    transcript = transcribe_audio(audio_path, api_key=api_key)
 
     return jsonify({"transcript": transcript})
 
@@ -51,10 +52,11 @@ def transcribe():
 def summarize():
     data = request.get_json()
     text = data.get("text")
+    api_key = data.get("api_key") or None
 
     if not text:
         return jsonify({"error": "No text provided"}), 400
 
-    summary = summarize_transcript(text)
+    summary = summarize_transcript(text, api_key=api_key)
 
     return jsonify({"summary": summary})
